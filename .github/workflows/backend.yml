@@ -21,13 +21,10 @@ jobs:
                   distribution: "temurin"
                   cache: maven
 
-            - name: Run tests
-              run: mvn -B test
+            - name: Build and test
+              run: mvn clean install -B
               working-directory: riad-booking-platform_backend
 
-            - name: Package application
-              run: mvn -B package -DskipTests
-              working-directory: riad-booking-platform_backend
 
             # - name: Build Docker image
             #   run: docker build -t backend:${{ github.sha }} .
