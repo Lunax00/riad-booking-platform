@@ -19,6 +19,11 @@
     <modules>
         <module>catalog-service</module>
         <module>user-service</module>
+<<<<<<< Updated upstream
+=======
+        <module>notification-service</module>
+        <module>research-service</module>
+>>>>>>> Stashed changes
 
     </modules>
 
