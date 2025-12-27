@@ -14,6 +14,13 @@
 	<name>riad-booking-platform_backend</name>
 	<description>riad-booking-platform_backend</description>
 	<url/>
+
+    <modules>
+        <module>catalog-service</module>
+        <module>user-service</module>
+
+    </modules>
+
 	<licenses>
 		<license/>
 	</licenses>
