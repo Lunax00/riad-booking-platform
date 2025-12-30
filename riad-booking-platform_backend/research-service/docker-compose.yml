@@ -24,3 +24,5 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+
+

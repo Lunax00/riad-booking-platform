@@ -1,9 +1,9 @@
-package com.riadbooking.searchservice.controller;
+package com.code.researchservice.controller;
 
-import com.riadbooking.searchservice.dto.SearchCriteria;
-import com.riadbooking.searchservice.model.Riad;
-import com.riadbooking.searchservice.repository.RiadRepository;
-import com.riadbooking.searchservice.service.RiadSearchService;
+import com.code.researchservice.dto.SearchCriteria;
+import com.code.researchservice.model.Riad;
+import com.code.researchservice.repository.RiadRepository;
+import com.code.researchservice.service.RiadSearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,3 +29,4 @@ public class RiadSearchController {
         return riadRepository.save(riad);
     }
 }
+

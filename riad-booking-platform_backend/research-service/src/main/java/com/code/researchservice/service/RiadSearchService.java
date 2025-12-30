@@ -1,7 +1,7 @@
-package com.riadbooking.searchservice.service;
+package com.code.researchservice.service;
 
-import com.riadbooking.searchservice.dto.SearchCriteria;
-import com.riadbooking.searchservice.model.Riad;
+import com.code.researchservice.dto.SearchCriteria;
+import com.code.researchservice.model.Riad;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;

@@ -1,4 +1,4 @@
-package com.riadbooking.searchservice.model;
+package com.code.researchservice.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -45,3 +45,4 @@ public class Riad {
     @Field(type = FieldType.Date, format = DateFormat.date)
     private LocalDate disponibleA;
 }
+

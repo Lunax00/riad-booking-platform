@@ -1,4 +1,4 @@
-package com.riadbooking.searchservice.dto;
+package com.code.researchservice.dto;
 
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -26,3 +26,4 @@ public class SearchCriteria {
 
     private List<String> equipements; // ["wifi","piscine"]
 }
+

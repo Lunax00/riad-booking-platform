@@ -1,11 +1,13 @@
-package com.riadbooking.searchservice;
+package com.code.researchservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SearchServiceApplication {
+public class ResearchServiceApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(SearchServiceApplication.class, args);
+        SpringApplication.run(ResearchServiceApplication.class, args);
     }
+
 }

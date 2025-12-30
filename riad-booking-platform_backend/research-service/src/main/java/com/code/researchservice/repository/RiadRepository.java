@@ -1,7 +1,8 @@
-package com.riadbooking.searchservice.repository;
+package com.code.researchservice.repository;
 
-import com.riadbooking.searchservice.model.Riad;
+import com.code.researchservice.model.Riad;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface RiadRepository extends ElasticsearchRepository<Riad, String> {
 }
+
