@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s        # Collecter les métriques tous les 15 secondes
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'riad-monitor'
+
+scrape_configs:
+  # Prometheus lui-même
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # User Service
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['localhost:8081']
+    metrics_path: '/actuator/prometheus'
+
+  # Catalog Service
+  - job_name: 'catalog-service'
+    static_configs:
+      - targets: ['localhost:8082']
+    metrics_path: '/actuator/prometheus'
+
+  # Search Service
+  - job_name: 'search-service'
+    static_configs:
+      - targets: ['localhost:8083']
+    metrics_path: '/actuator/prometheus'
+
+  # Reservation Service
+  - job_name: 'reservation-service'
+    static_configs:
+      - targets: ['localhost:8084']
+    metrics_path: '/actuator/prometheus'
+
+  # Payment Service
+  - job_name: 'payment-service'
+    static_configs:
+      - targets: ['localhost:8085']
+    metrics_path: '/actuator/prometheus'
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['localhost:8080']
+    metrics_path: '/actuator/prometheus'

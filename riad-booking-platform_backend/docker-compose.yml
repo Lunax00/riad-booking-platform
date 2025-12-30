@@ -1,0 +1,156 @@
+version: '3.9'
+
+services:
+  # ============================================
+  # PostgreSQL - Base de données
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: riad-postgres
+    environment:
+      POSTGRES_USER: riad_user
+      POSTGRES_PASSWORD: riad_password
+      POSTGRES_DB: riad_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - riad-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U riad_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # RabbitMQ - Message Broker
+  # ============================================
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: riad-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - riad-network
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Keycloak - Serveur d'authentification
+  # ============================================
+  keycloak:
+    image: keycloak/keycloak:23.0.0
+    container_name: riad-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
+      KC_DB_USERNAME: riad_user
+      KC_DB_PASSWORD: riad_password
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - riad-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: start-dev
+
+  # ============================================
+  # pgAdmin - Interface PostgreSQL (optionnel)
+  # ============================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: riad-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - riad-network
+    depends_on:
+      - postgres
+
+  # ============================================
+  # Elasticsearch - Moteur de recherche
+  # ============================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    container_name: riad-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - riad-network
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Prometheus - Collecteur de métriques
+  # ============================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: riad-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - riad-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  # ============================================
+  # Grafana - Dashboards de visualisation
+  # ============================================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: riad-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: 'grafana-piechart-panel'
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - riad-network
+    depends_on:
+      - prometheus
+
+networks:
+  riad-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  keycloak_data:
+  rabbitmq_data:
+  elasticsearch_data:
+  prometheus_data:
+  grafana_data:
