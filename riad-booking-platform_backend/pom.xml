@@ -20,7 +20,6 @@
         <module>catalog-service</module>
         <module>user-service</module>
 <module>payment-service</module>
-        <module>booking-service</module>
         <module>reservation-service</module>
     </modules>
 
