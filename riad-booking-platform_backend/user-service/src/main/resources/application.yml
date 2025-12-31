@@ -2,20 +2,15 @@ spring:
   application:
     name: user-service
 
-  # ========== Serveur ==========
   server:
     port: 8081
-    servlet:
-      context-path: /
 
-  # ========== Base de Données ==========
   datasource:
     url: jdbc:postgresql://localhost:5432/riad_db
     username: riad_user
     password: riad_password
     driver-class-name: org.postgresql.Driver
 
-  # ========== JPA / Hibernate ==========
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,9 +19,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL13Dialect
         format_sql: true
-        use_sql_comments: true
 
-  # ========== Keycloak ==========
   security:
     oauth2:
       resourceserver:
@@ -34,27 +27,19 @@ spring:
           issuer-uri: http://localhost:8080/realms/riad
           jwk-set-uri: http://localhost:8080/realms/riad/protocol/openid-connect/certs
 
-# ========== Management (Actuator + Métriques) ==========
 management:
   endpoints:
     web:
       exposure:
         include: health,prometheus,info,metrics
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http:
-          server:
-            requests: true
   endpoint:
     health:
       show-details: always
 
-# ========== Logging ==========
 logging:
   level:
     root: INFO
-    com.riad: DEBUG
+    ma.lunaire: DEBUG
     org.springframework.security: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
