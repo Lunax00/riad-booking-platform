@@ -1,13 +1,29 @@
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
+
 WORKDIR /app
+
 COPY pom.xml .
-RUN mvn -q -e -DskipTests dependency:go-offline
+RUN mvn dependency:go-offline -B
+
 COPY src ./src
-RUN mvn -q -DskipTests package
+RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine
+
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8082
-ENTRYPOINT ["java","-jar","app.jar"]
 
+RUN addgroup -g 1001 appgroup && \
+    adduser -u 1001 -G appgroup -D appuser
+
+COPY --from=builder /app/target/*.jar app.jar
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 8085
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8085/actuator/health || exit 1
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

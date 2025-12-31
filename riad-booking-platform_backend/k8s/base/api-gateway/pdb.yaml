@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+      app: api-gateway
+    matchLabels:
+  selector:
+  minAvailable: 1
+spec:
+    app: api-gateway
+  labels:
+  name: api-gateway-pdb
+metadata:
+kind: PodDisruptionBudget
+
