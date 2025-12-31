@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: riad-booking-prod
+
+resources:
+  - ../../base
+  - ingress.yaml
+
+namePrefix: prod-
+
+commonLabels:
+  environment: production
+
+# Production-specific patches
+patches:
+  - patch: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: api-gateway
+      spec:
+        replicas: 3
+        template:
+          spec:
+            containers:
+              - name: api-gateway
+                resources:
+                  requests:
+                    memory: "512Mi"
+                    cpu: "250m"
+                  limits:
+                    memory: "1Gi"
+                    cpu: "1000m"
+
+configMapGenerator:
+  - name: api-gateway-config
+    behavior: merge
+    literals:
+      - spring.profiles.active=prod,kubernetes
+      - LOGGING_LEVEL_ROOT=WARN
+      - LOGGING_LEVEL_COM_LUNAIRE=INFO
+
