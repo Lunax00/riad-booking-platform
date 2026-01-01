@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: .
+    container_name: riad-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
+      - SERVER_PORT=8080
+      # Service URLs for routing
+      - USER_SERVICE_URL=${USER_SERVICE_URL:-http://user-service:8081}
+      - CATALOG_SERVICE_URL=${CATALOG_SERVICE_URL:-http://catalog-service:8082}
+      - RESERVATION_SERVICE_URL=${RESERVATION_SERVICE_URL:-http://reservation-service:8083}
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL:-http://payment-service:8084}
+      - RESEARCH_SERVICE_URL=${RESEARCH_SERVICE_URL:-http://research-service:8085}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+    networks:
+      - riad-network
+
+networks:
+  riad-network:
+    driver: bridge
+
