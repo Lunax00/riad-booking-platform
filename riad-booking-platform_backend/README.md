@@ -20,9 +20,9 @@ Ce projet implémente une architecture microservices avec :
 - **API Gateway** : Point d'entrée unique (port 8080)
 - **User Service** : Gestion des utilisateurs (port 8081)
 - **Catalog Service** : Catalogue des riads (port 8082)
-- **Search Service** : Recherche avancée (port 8083)
-- **Reservation Service** : Gestion des réservations (port 8084)
-- **Payment Service** : Gestion des paiements (port 8085)
+- **Reservation Service** : Gestion des réservations (port 8083)
+- **Payment Service** : Gestion des paiements (port 8084)
+- **Research Service** : Recherche avancée avec Elasticsearch (port 8085)
 
 **Infrastructure** :
 - **PostgreSQL** : Base de données
@@ -33,14 +33,38 @@ Ce projet implémente une architecture microservices avec :
 
 ---
 
+## 🐳 Docker Compose par Microservice
+
+Chaque microservice dispose de son propre `docker-compose.yml` pour un développement isolé :
+
+```bash
+# Démarrer un service spécifique
+cd <service-name>
+cp .env.example .env  # Copier et configurer les variables d'environnement
+docker-compose up -d
+```
+
+### Services et leurs dépendances :
+
+| Service | Port | Dépendances |
+|---------|------|-------------|
+| api-gateway | 8080 | Aucune |
+| user-service | 8081 | PostgreSQL, Keycloak |
+| catalog-service | 8082 | H2 (embedded) |
+| reservation-service | 8083 | H2 (embedded) |
+| payment-service | 8084 | H2 (embedded), Stripe |
+| research-service | 8085 | Elasticsearch |
+
+---
+
 ## ✅ Prérequis
 
 Vous devez installer :
 
-1. **Java 17+**
+1. **Java 21+**
    ```bash
    java -version
-   # Doit afficher java version "17" ou plus
+   # Doit afficher java version "21" ou plus
    ```
 
 2. **Maven 3.8+**
@@ -128,9 +152,9 @@ cd catalog-service
 mvn spring-boot:run
 ```
 
-**Terminal 4 - Search Service** :
+**Terminal 4 - Research Service** :
 ```bash
-cd search-service
+cd research-service
 mvn spring-boot:run
 ```
 
@@ -159,15 +183,15 @@ mvn spring-boot:run
 | **API Gateway** | http://localhost:8080 | - |
 | **User Service** | http://localhost:8081 | - |
 | **Catalog Service** | http://localhost:8082 | - |
-| **Search Service** | http://localhost:8083 | - |
-| **Reservation Service** | http://localhost:8084 | - |
-| **Payment Service** | http://localhost:8085 | - |
+| **Reservation Service** | http://localhost:8083 | - |
+| **Payment Service** | http://localhost:8084 | - |
+| **Research Service** | http://localhost:8085 | - |
 
 ### Infrastructure
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| **Keycloak** | http://localhost:8080 | admin / admin |
+| **Keycloak** | http://localhost:8180 | admin / admin |
 | **RabbitMQ** | http://localhost:15672 | guest / guest |
 | **PostgreSQL** | localhost:5432 | riad_user / riad_password |
 | **pgAdmin** | http://localhost:5050 | admin@example.com / admin |
