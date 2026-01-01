@@ -1,0 +1,8 @@
+apiVersion: v1
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: riad-booking-platform
+  labels:
+  name: riad-booking
+metadata:
+kind: Namespace
+
