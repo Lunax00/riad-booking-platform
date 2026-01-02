@@ -1,31 +1,31 @@
+server:
+  port: ${SERVER_PORT:8081}
+
 spring:
   application:
     name: user-service
 
-  server:
-    port: 8081
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/riad_db
-    username: riad_user
-    password: riad_password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/user_db}
+    username: ${SPRING_DATASOURCE_USERNAME:riad_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:riad_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL13Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/riad
-          jwk-set-uri: http://localhost:8080/realms/riad/protocol/openid-connect/certs
+          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:http://localhost:8180/realms/riad-booking}
+          jwk-set-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI:http://localhost:8180/realms/riad-booking/protocol/openid-connect/certs}
 
 management:
   endpoints:
