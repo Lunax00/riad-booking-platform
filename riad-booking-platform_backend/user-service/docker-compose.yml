@@ -36,6 +36,7 @@ services:
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-riad_password}
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
     ports:
       - "8180:8080"
     depends_on:
@@ -43,10 +44,10 @@ services:
         condition: service_healthy
     command: start-dev
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e 'GET /health/ready HTTP/1.1\\r\\nhost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3;if grep -q '\"status\": \"UP\"' <&3;then exit 0;else exit 1;fi"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
       interval: 30s
       timeout: 10s
-      start_period: 60s
+      start_period: 90s
       retries: 5
     networks:
       - user-service-network
