@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: catalog-service-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-catalog_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-catalog_password}
+      POSTGRES_DB: ${POSTGRES_DB:-catalog_db}
+    ports:
+      - "5433:5432"
+    volumes:
+      - catalog_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-catalog_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - catalog-service-network
+
+  # Catalog Service Application
+  catalog-service:
+    build: .
+    container_name: riad-catalog-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - SERVER_PORT=8082
+      # Database Configuration
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-catalog_db}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-catalog_user}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-catalog_password}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${JPA_DDL_AUTO:-update}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8082/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    networks:
+      - catalog-service-network
+
+volumes:
+  catalog_postgres_data:
+
+networks:
+  catalog-service-network:
+    driver: bridge
+
