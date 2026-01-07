@@ -1,4 +1,8 @@
 package ma.lunaire.catalogservice.domain;
 
-public class ItemStatus {
+public enum ItemStatus {
+    AVAILABLE,
+    UNAVAILABLE,
+    MAINTENANCE,
+    ARCHIVED
 }
